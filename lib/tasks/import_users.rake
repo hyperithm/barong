@@ -25,10 +25,21 @@ namespace 'users' do
     csv_table = File.read(options[:path])
     CSV.parse(csv_table, :headers => true).map do |row|
       composed_uid = "ID" + (1000000000 + row['AccountId'].to_i).to_s
+      case row['VerificationLevel']
+      when '0'
+        level = 0 
+      when '1'
+        level = 1
+      when '2'
+        level = 3
+      when '3'
+        level = 4
+      when '4'
+        level = 6
       User.new(
         uid: composed_uid,
         email: row['Email'],
-        level: 0,
+        level: level,
         state: 'pending',
         role: 'member',
         password: SecureRandom.hex(7) # enough to be uniq for each user and hard to brute force
